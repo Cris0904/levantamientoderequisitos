@@ -1,0 +1,465 @@
+{
+  "name": "Jira Issues to n8n Workflows Converter",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger-1",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $json.jiraUrl }}/rest/api/3/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "jql",
+              "value": "project = {{ $json.projectKey }} AND status != Done ORDER BY created DESC"
+            },
+            {
+              "name": "maxResults",
+              "value": "50"
+            },
+            {
+              "name": "fields",
+              "value": "summary,description,issuetype,priority,status,customfield_10000"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "http-request-jira",
+      "name": "Get Jira Issues",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        300
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "jiraAuth",
+          "name": "Jira API Credentials"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.error }}",
+              "operation": "isEmpty"
+            }
+          ]
+        }
+      },
+      "id": "if-error-check",
+      "name": "Check Jira API Success",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "issues",
+        "options": {}
+      },
+      "id": "split-out-issues",
+      "name": "Split Issues",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        900,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Extract and format Jira issue data\nconst issue = $input.item.json;\n\nconst issueData = {\n  issueKey: issue.key,\n  title: issue.fields.summary,\n  description: issue.fields.description?.content?.[0]?.content?.[0]?.text || issue.fields.description || 'No description',\n  issueType: issue.fields.issuetype?.name || 'Unknown',\n  priority: issue.fields.priority?.name || 'Medium',\n  status: issue.fields.status?.name || 'Unknown',\n  acceptanceCriteria: issue.fields.customfield_10000 || 'No acceptance criteria defined',\n  createdDate: issue.fields.created\n};\n\n// Create a structured prompt for AI\nconst aiPrompt = `Analyze this Jira issue and create a complete n8n workflow JSON specification:\n\nIssue: ${issueData.issueKey}\nTitle: ${issueData.title}\nType: ${issueData.issueType}\nPriority: ${issueData.priority}\nDescription: ${issueData.description}\nAcceptance Criteria: ${issueData.acceptanceCriteria}\n\nCreate a valid n8n workflow JSON that implements this requirement. Include:\n1. Appropriate trigger node (webhook, schedule, or manual)\n2. Necessary action nodes (HTTP Request, Code, etc.)\n3. Data transformation nodes if needed\n4. Proper connections between nodes\n5. Descriptive node names\n\nReturn ONLY valid JSON following n8n workflow structure with name, nodes, connections, and settings fields.`;\n\nreturn {\n  json: {\n    ...issueData,\n    aiPrompt: aiPrompt\n  }\n};"
+      },
+      "id": "code-format-issues",
+      "name": "Format Issue Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-4"
+            },
+            {
+              "name": "messages",
+              "value": "={{ [{ \"role\": \"system\", \"content\": \"You are an n8n workflow expert. Generate valid n8n workflow JSON structures based on requirements. Always return valid JSON only, no markdown or explanations.\" }, { \"role\": \"user\", \"content\": $json.aiPrompt }] }}"
+            },
+            {
+              "name": "temperature",
+              "value": "0.3"
+            },
+            {
+              "name": "max_tokens",
+              "value": "2000"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "http-openai-generate",
+      "name": "Generate Workflow with AI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1340,
+        220
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "openaiAuth",
+          "name": "OpenAI API Key"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Parse AI response and create final workflow JSON\nconst item = $input.item.json;\n\ntry {\n  const aiResponse = item.choices?.[0]?.message?.content || '{}';\n  \n  // Try to parse the AI-generated workflow\n  let workflowJson;\n  try {\n    // Remove markdown code blocks if present\n    const cleanJson = aiResponse.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\n    workflowJson = JSON.parse(cleanJson);\n  } catch (parseError) {\n    // Fallback: create a basic workflow structure\n    workflowJson = {\n      name: `Workflow for ${item.issueKey}`,\n      nodes: [],\n      connections: {},\n      settings: { executionOrder: \"v1\" }\n    };\n  }\n  \n  // Add metadata\n  workflowJson.meta = {\n    sourceJiraIssue: item.issueKey,\n    generatedAt: new Date().toISOString(),\n    issueTitle: item.title\n  };\n  \n  return {\n    json: {\n      issueKey: item.issueKey,\n      issueTitle: item.title,\n      workflow: workflowJson,\n      workflowJson: JSON.stringify(workflowJson, null, 2),\n      success: true\n    }\n  };\n} catch (error) {\n  return {\n    json: {\n      issueKey: item.issueKey || 'unknown',\n      error: error.message,\n      success: false\n    }\n  };\n}"
+      },
+      "id": "code-parse-workflow",
+      "name": "Parse Workflow JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1560,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.success }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "if-workflow-success",
+      "name": "Check Workflow Generation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1780,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.storageWebhookUrl }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "issueKey",
+              "value": "={{ $json.issueKey }}"
+            },
+            {
+              "name": "issueTitle",
+              "value": "={{ $json.issueTitle }}"
+            },
+            {
+              "name": "workflow",
+              "value": "={{ $json.workflow }}"
+            },
+            {
+              "name": "workflowJson",
+              "value": "={{ $json.workflowJson }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "http-save-workflow",
+      "name": "Save Generated Workflow",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2000,
+        140
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Log error for failed workflow generation\nconst failedItems = $input.all();\n\nconst errorLog = failedItems.map(item => ({\n  issueKey: item.json.issueKey,\n  error: item.json.error || 'Unknown error during workflow generation'\n}));\n\nconsole.log('Failed workflow generations:', errorLog);\n\nreturn {\n  json: {\n    failedCount: errorLog.length,\n    errors: errorLog\n  }\n};"
+      },
+      "id": "code-log-errors",
+      "name": "Log Generation Errors",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Log Jira API error\nconst errorData = $input.first().json;\n\nconsole.error('Jira API Error:', errorData.error || errorData);\n\nreturn {\n  json: {\n    error: 'Failed to fetch Jira issues',\n    details: errorData.error || 'Unknown error',\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "code-log-jira-error",
+      "name": "Log Jira API Error",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Initialize workflow with Jira configuration\n// Set these values according to your Jira instance\nreturn {\n  json: {\n    jiraUrl: 'https://your-domain.atlassian.net',\n    projectKey: 'YOUR_PROJECT_KEY',\n    storageWebhookUrl: 'https://your-storage-endpoint.com/workflows'\n  }\n};"
+      },
+      "id": "code-config",
+      "name": "Configuration",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        180
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "allWorkflows",
+        "options": {}
+      },
+      "id": "aggregate-results",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2220,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Summary of execution\nconst successItems = $input.all();\n\nconst summary = {\n  totalProcessed: successItems.length,\n  timestamp: new Date().toISOString(),\n  message: `Successfully generated ${successItems.length} n8n workflows from Jira issues`\n};\n\nconsole.log('Execution Summary:', summary);\n\nreturn { json: summary };"
+      },
+      "id": "code-summary",
+      "name": "Execution Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2440,
+        140
+      ]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuration": {
+      "main": [
+        [
+          {
+            "node": "Get Jira Issues",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Jira Issues": {
+      "main": [
+        [
+          {
+            "node": "Check Jira API Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Jira API Success": {
+      "main": [
+        [
+          {
+            "node": "Split Issues",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Jira API Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Issues": {
+      "main": [
+        [
+          {
+            "node": "Format Issue Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Issue Data": {
+      "main": [
+        [
+          {
+            "node": "Generate Workflow with AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Workflow with AI": {
+      "main": [
+        [
+          {
+            "node": "Parse Workflow JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Workflow JSON": {
+      "main": [
+        [
+          {
+            "node": "Check Workflow Generation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Workflow Generation": {
+      "main": [
+        [
+          {
+            "node": "Save Generated Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Generation Errors",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Generated Workflow": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Results": {
+      "main": [
+        [
+          {
+            "node": "Execution Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "id": "jira-automation",
+      "name": "Jira Automation"
+    },
+    {
+      "id": "ai-workflow-generation",
+      "name": "AI Workflow Generation"
+    }
+  ],
+  "meta": {
+    "instanceId": "n8n-jira-to-workflows"
+  }
+}
