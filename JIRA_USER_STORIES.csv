@@ -1,0 +1,634 @@
+Summary,Issue Type,Priority,Story Points,Sprint,Epic Name,Component,Labels,Description
+Registro de Usuario,Story,High,3,Sprint 1,Autenticacion y Onboarding,MCP Dashboard,"fase-0,critical,auth","**Como** traficer nuevo
+**Quiero** crear una cuenta en la plataforma
+**Para** poder gestionar mis campañas de Meta Ads
+
+*Criterios de Aceptación:*
+- Usuario puede acceder al formulario de registro
+- Usuario ingresa email y contraseña (min 8 caracteres)
+- Usuario recibe email de verificación
+- Usuario puede iniciar sesión después de verificar email
+
+*Notas:* Fase 0 - Crítico para lanzamiento"
+Inicio de Sesión,Story,High,2,Sprint 1,Autenticacion y Onboarding,MCP Dashboard,"fase-0,critical,auth","**Como** traficer registrado
+**Quiero** iniciar sesión en la plataforma
+**Para** acceder a mi dashboard y cuentas conectadas
+
+*Criterios de Aceptación:*
+- Usuario ingresa email y contraseña válidos
+- Sistema valida credenciales
+- Usuario es redirigido a dashboard
+- Token JWT es almacenado correctamente
+
+*Notas:* Fase 0 - Crítico"
+Recuperación de Contraseña,Story,Medium,2,Sprint 1,Autenticacion y Onboarding,MCP Dashboard,"fase-0,auth","**Como** traficer
+**Quiero** recuperar mi contraseña olvidada
+**Para** poder acceder nuevamente a mi cuenta
+
+*Criterios de Aceptación:*
+- Usuario puede solicitar reset de contraseña
+- Usuario recibe email con link temporal
+- Link expira después de 1 hora
+- Usuario puede establecer nueva contraseña
+
+*Notas:* Fase 0"
+Conectar Cuenta de Meta,Story,Highest,5,Sprint 1,Conexion Meta Ads,MCP Dashboard,"fase-0,critical,meta-api,blocking","**Como** traficer
+**Quiero** conectar mi cuenta de Meta Ads mediante OAuth
+**Para** importar mis campañas automáticamente
+
+*Criterios de Aceptación:*
+- Usuario puede hacer clic en botón Conectar Meta
+- Usuario es redirigido a Meta OAuth
+- Usuario autoriza permisos (ads_management)
+- Sistema almacena access token encriptado
+
+*Notas:* Fase 0 - Crítico - Dependencia de Meta API"
+Gestionar Múltiples Cuentas,Story,High,3,Sprint 1,Conexion Meta Ads,MCP Dashboard,"fase-0,meta-api","**Como** traficer con varias cuentas
+**Quiero** conectar múltiples cuentas de Meta Ads
+**Para** ver todas mis campañas en un solo lugar
+
+*Criterios de Aceptación:*
+- Usuario puede conectar hasta 10 cuentas
+- Cada cuenta se muestra con nombre y estado
+- Usuario puede activar/desactivar cada cuenta
+- Usuario puede desconectar cuentas
+
+*Notas:* Fase 0"
+Renovar Token de Meta,Story,High,5,Sprint 2,Conexion Meta Ads,MCP Dashboard,"fase-0,critical,meta-api","**Como** traficer
+**Quiero** renovar automáticamente mi token de Meta cuando expire
+**Para** mantener conexión activa sin interrupciones
+
+*Criterios de Aceptación:*
+- Sistema detecta token próximo a expirar
+- Sistema solicita nuevo token automáticamente
+- Usuario NO necesita re-autenticarse manualmente
+- Sistema envía alerta si renovación falla
+
+*Notas:* Fase 0 - Crítico para producción"
+Ver Resumen de Campañas,Story,High,5,Sprint 1,Dashboard y Visualización,MCP Dashboard,"fase-0,dashboard","**Como** traficer
+**Quiero** ver un resumen de todas mis campañas activas
+**Para** tener una vista general del estado de mis ads
+
+*Criterios de Aceptación:*
+- Dashboard muestra campañas de todas las cuentas
+- Cada campaña muestra: nombre, estado, presupuesto, gasto actual
+- Datos se actualizan cada 30 minutos
+- Usuario puede filtrar por cuenta
+
+*Notas:* Fase 0"
+Ver Métricas de Campaña,Story,Medium,5,Sprint 2,Dashboard y Visualización,MCP Dashboard,"fase-0,dashboard,analytics","**Como** traficer
+**Quiero** ver métricas detalladas de cada campaña
+**Para** analizar performance (impresiones, clicks, CTR, CPC)
+
+*Criterios de Aceptación:*
+- Usuario hace clic en campaña
+- Modal muestra insights de últimos 30 días
+- Gráficos visuales de tendencias
+- Usuario puede cambiar rango de fechas
+
+*Notas:* Fase 0"
+Pausar/Reanudar Campañas,Story,Medium,3,Sprint 2,Dashboard y Visualización,MCP Dashboard,"fase-1,dashboard,meta-api","**Como** traficer
+**Quiero** pausar o reanudar campañas desde el dashboard
+**Para** gestionar campañas sin entrar a Meta Ads Manager
+
+*Criterios de Aceptación:*
+- Usuario ve botón de pausar en cada campaña activa
+- Usuario confirma acción
+- Sistema llama a Meta API para cambiar estado
+- Estado se actualiza en dashboard en tiempo real
+
+*Notas:* Fase 1"
+Configurar Alertas,Story,High,3,Sprint 1,Sistema de Alertas,MCP Dashboard,"fase-0,critical,alerts","**Como** traficer
+**Quiero** configurar qué tipos de alertas quiero recibir
+**Para** recibir solo notificaciones relevantes
+
+*Criterios de Aceptación:*
+- Usuario accede a panel de configuración
+- Usuario puede activar/desactivar: Campañas rechazadas, Presupuesto agotado, Bajo rendimiento, Problemas de cuenta
+- Configuración se guarda por cuenta
+- Usuario recibe confirmación
+
+*Notas:* Fase 0 - Crítico"
+Recibir Alerta de Campaña Rechazada,Story,Highest,5,Sprint 1,Sistema de Alertas,MCP Dashboard,"fase-0,critical,alerts,value-prop","**Como** traficer
+**Quiero** recibir alerta inmediata cuando una campaña es rechazada
+**Para** poder corregirla rápidamente
+
+*Criterios de Aceptación:*
+- Sistema verifica estado cada 30 minutos
+- Alerta aparece en centro de notificaciones
+- Alerta incluye: nombre de campaña, razón del rechazo, enlace a Meta Ads
+- Usuario puede marcar alerta como leída
+
+*Notas:* Fase 0 - Value prop principal"
+Alerta de Presupuesto Agotado,Story,High,3,Sprint 1,Sistema de Alertas,MCP Dashboard,"fase-0,alerts","**Como** traficer
+**Quiero** recibir alerta cuando mi presupuesto está por agotarse (90%)
+**Para** evitar que campañas se detengan
+
+*Criterios de Aceptación:*
+- Sistema compara gasto vs presupuesto diario
+- Alerta se genera cuando gasto >= 90%
+- Alerta muestra monto gastado y monto restante
+- Usuario puede tomar acción desde alerta
+
+*Notas:* Fase 0"
+Alerta de Bajo Rendimiento,Story,Medium,5,Sprint 2,Sistema de Alertas,MCP Dashboard,"fase-1,alerts,analytics","**Como** traficer
+**Quiero** recibir alerta cuando una campaña tiene CTR muy bajo (<0.5%)
+**Para** optimizar campañas con mal performance
+
+*Criterios de Aceptación:*
+- Sistema calcula CTR promedio
+- Alerta se genera si CTR < 0.5% por 3 días
+- Alerta sugiere acciones (cambiar creativos)
+- Usuario puede resolver o ignorar alerta
+
+*Notas:* Fase 1"
+Centro de Alertas,Story,Medium,3,Sprint 2,Sistema de Alertas,MCP Dashboard,"fase-0,alerts,ui","**Como** traficer
+**Quiero** ver todas mis alertas en un solo lugar
+**Para** gestionar notificaciones de forma organizada
+
+*Criterios de Aceptación:*
+- Usuario accede a centro de alertas
+- Alertas ordenadas por severidad (Crítica, Warning, Info)
+- Usuario puede filtrar por tipo y fecha
+- Usuario puede marcar como resueltas
+
+*Notas:* Fase 0"
+Acceder a Workflows Predefinidos,Story,Medium,5,Sprint 3,Workflows n8n,MCP Dashboard,"fase-1,n8n,automation","**Como** traficer
+**Quiero** acceder a workflows de automatización predefinidos
+**Para** automatizar tareas repetitivas sin conocimiento técnico
+
+*Criterios de Aceptación:*
+- Usuario ve sección de Workflows
+- Workflows organizados por categoría
+- Cada workflow muestra: descripción, qué automatiza, requisitos
+- Usuario puede activar workflow con 1 clic
+
+*Notas:* Fase 1"
+Activar Workflow de Auto-Pausa,Story,Medium,8,Sprint 3,Workflows n8n,MCP Dashboard,"fase-1,n8n,automation","**Como** traficer
+**Quiero** activar workflow que pause campañas con bajo CTR automáticamente
+**Para** ahorrar presupuesto en campañas ineficientes
+
+*Criterios de Aceptación:*
+- Usuario selecciona workflow Auto-Pausa
+- Usuario configura umbral de CTR (ej: <0.3%)
+- Workflow se ejecuta cada 6 horas
+- Usuario recibe reporte de campañas pausadas
+
+*Notas:* Fase 1"
+Ver Historial de Ejecuciones,Story,Low,3,Sprint 3,Workflows n8n,MCP Dashboard,"fase-1,n8n,monitoring","**Como** traficer
+**Quiero** ver historial de ejecuciones de mis workflows
+**Para** verificar que automatizaciones funcionan correctamente
+
+*Criterios de Aceptación:*
+- Usuario accede a panel de workflow activo
+- Historial muestra: fecha/hora, acción tomada, resultado (éxito/error)
+- Usuario puede ver logs detallados
+- Usuario puede desactivar workflow si hay errores
+
+*Notas:* Fase 1"
+Ver Catálogo de Estrategias,Story,Highest,5,Sprint 4,Exploración de Estrategias,Copy Strategy,"fase-2,critical,core-feature","**Como** traficer
+**Quiero** ver un catálogo de estrategias disponibles
+**Para** elegir la que mejor se adapte a mi negocio
+
+*Criterios de Aceptación:*
+- Usuario accede a sección Estrategias
+- Estrategias mostradas como tarjetas
+- Cada tarjeta muestra: nombre, descripción, precio, ROAS promedio, # de suscriptores
+- Usuario puede filtrar por tipo de método
+
+*Notas:* Fase 2 - Core feature"
+Ver Detalles de Estrategia,Story,High,3,Sprint 4,Exploración de Estrategias,Copy Strategy,"fase-2,ui","**Como** traficer
+**Quiero** ver información detallada de una estrategia
+**Para** entender cómo funciona antes de suscribirme
+
+*Criterios de Aceptación:*
+- Usuario hace clic en estrategia
+- Modal muestra: descripción extendida, parámetros configurables, resultados históricos, testimonios
+- Usuario puede ver perfil del estratega
+- Usuario NO ve código interno del workflow
+
+*Notas:* Fase 2"
+Ver Perfil de Estratega,Story,Medium,3,Sprint 4,Exploración de Estrategias,Copy Strategy,"fase-2,ui,trust","**Como** traficer
+**Quiero** ver el perfil del estratega verificado
+**Para** confiar en la credibilidad de la estrategia
+
+*Criterios de Aceptación:*
+- Usuario hace clic en nombre de estratega
+- Perfil muestra: foto, bio, años de experiencia, resultados verificados
+- Muestra badge de Verificado
+- Muestra estadísticas (estrategias publicadas, suscriptores totales)
+
+*Notas:* Fase 2"
+Suscribirse a Estrategia,Story,Highest,8,Sprint 5,Suscripción a Estrategias,Copy Strategy,"fase-2,critical,core-feature,payments","**Como** traficer
+**Quiero** suscribirme a una estrategia de un experto
+**Para** replicar su método en mis campañas
+
+*Criterios de Aceptación:*
+- Usuario hace clic en Suscribirse
+- Usuario configura parámetros (producto, presupuesto diario, días de ejecución)
+- Sistema muestra preview de configuración
+- Usuario confirma y paga con Stripe
+
+*Notas:* Fase 2 - Core feature"
+Configurar Parámetros de Estrategia,Story,High,5,Sprint 5,Suscripción a Estrategias,Copy Strategy,"fase-2,ui,ux","**Como** traficer
+**Quiero** personalizar los parámetros de la estrategia
+**Para** adaptarla a mi producto y presupuesto
+
+*Criterios de Aceptación:*
+- Formulario dinámico basado en configSchema
+- Validación de parámetros en tiempo real
+- Ayuda contextual para cada parámetro
+- Sistema calcula estimación de inversión
+
+*Notas:* Fase 2"
+Pago con Stripe,Story,Highest,5,Sprint 5,Suscripción a Estrategias,Copy Strategy,"fase-2,critical,payments,stripe","**Como** traficer
+**Quiero** pagar la suscripción de forma segura con tarjeta
+**Para** empezar a usar la estrategia inmediatamente
+
+*Criterios de Aceptación:*
+- Usuario ingresa datos de tarjeta (Stripe Checkout)
+- Pago es procesado de forma segura
+- Usuario recibe confirmación por email
+- Suscripción se activa automáticamente
+
+*Notas:* Fase 2 - Integración crítica"
+Cancelar Suscripción,Story,High,3,Sprint 5,Suscripción a Estrategias,Copy Strategy,"fase-2,payments,stripe","**Como** traficer suscrito
+**Quiero** cancelar mi suscripción a una estrategia
+**Para** dejar de pagar si no me está funcionando
+
+*Criterios de Aceptación:*
+- Usuario accede a Mis Suscripciones
+- Usuario hace clic en Cancelar
+- Sistema confirma acción
+- Suscripción se cancela al final del período
+
+*Notas:* Fase 2"
+Despliegue Automático de Workflow,Story,Highest,8,Sprint 5,Ejecución de Estrategias,Copy Strategy,"fase-2,critical,n8n,technical","**Como** traficer suscrito
+**Quiero** que el workflow se despliegue automáticamente al suscribirme
+**Para** no tener que configurar nada técnico
+
+*Criterios de Aceptación:*
+- Sistema llama a n8n API al confirmar pago
+- Workflow se crea con parámetros configurados
+- Webhook se registra correctamente
+- Sistema envía notificación de activación exitosa
+
+*Notas:* Fase 2 - Core técnico"
+Replicación de Campañas,Story,Highest,13,Sprint 6,Ejecución de Estrategias,Copy Strategy,"fase-2,critical,n8n,meta-api,complex","**Como** traficer suscrito
+**Quiero** que la estrategia replique campañas en mi cuenta de Meta
+**Para** automatizar creación según el método del estratega
+
+*Criterios de Aceptación:*
+- Workflow se ejecuta en horario configurado
+- Workflow llama a Meta API para crear campañas
+- Campañas se crean con estructura del método
+- Sistema registra campañas creadas en DB
+
+*Notas:* Fase 2 - Lógica compleja"
+Monitoreo de Estrategia Activa,Story,High,8,Sprint 6,Ejecución de Estrategias,Copy Strategy,"fase-2,dashboard,analytics","**Como** traficer suscrito
+**Quiero** ver en tiempo real qué está haciendo mi estrategia
+**Para** verificar que funciona correctamente
+
+*Criterios de Aceptación:*
+- Usuario accede a Mis Estrategias Activas
+- Dashboard muestra: campañas creadas, gasto acumulado, métricas de performance
+- Gráfico de evolución de ROAS
+- Usuario puede pausar estrategia temporalmente
+
+*Notas:* Fase 2"
+Pausar/Reanudar Estrategia,Story,Medium,3,Sprint 6,Ejecución de Estrategias,Copy Strategy,"fase-2,control","**Como** traficer suscrito
+**Quiero** pausar temporalmente la ejecución de mi estrategia
+**Para** detenerla sin cancelar la suscripción
+
+*Criterios de Aceptación:*
+- Usuario hace clic en Pausar
+- Sistema detiene ejecución del workflow
+- Campañas existentes NO se pausan
+- Usuario puede reanudar cuando quiera
+
+*Notas:* Fase 2"
+Dashboard de Estratega,Story,High,5,Sprint 7,Revenue Share con Estrategas,Copy Strategy,"fase-2,strategist,analytics","**Como** estratega verificado
+**Quiero** ver mis ingresos por suscripciones
+**Para** hacer seguimiento de mis ganancias
+
+*Criterios de Aceptación:*
+- Estratega accede a panel de estratega
+- Dashboard muestra: suscriptores activos, ingresos del mes, ingresos históricos
+- Breakdown por estrategia
+- Proyección de próximo pago
+
+*Notas:* Fase 2"
+Reporte de Ingresos,Story,Medium,3,Sprint 7,Revenue Share con Estrategas,Copy Strategy,"fase-2,strategist,reporting","**Como** estratega verificado
+**Quiero** descargar reporte detallado de ingresos
+**Para** llevar mi contabilidad
+
+*Criterios de Aceptación:*
+- Estratega puede seleccionar rango de fechas
+- Reporte incluye: suscripciones nuevas, cancelaciones, revenue share
+- Exportar como PDF o CSV
+- Reporte incluye info fiscal
+
+*Notas:* Fase 2"
+Configurar Pago Stripe Connect,Story,Highest,8,Sprint 7,Revenue Share con Estrategas,Copy Strategy,"fase-2,critical,strategist,stripe,compliance","**Como** estratega verificado
+**Quiero** conectar mi cuenta de Stripe para recibir pagos
+**Para** cobrar mi revenue share automáticamente
+
+*Criterios de Aceptación:*
+- Estratega conecta cuenta Stripe
+- Stripe Connect valida identidad
+- Sistema guarda Stripe Account ID
+- Pagos se transfieren automáticamente cada mes
+
+*Notas:* Fase 2 - Compliance"
+Aplicar como Estratega,Story,High,5,Sprint 8,Publicación de Estrategias,Copy Strategy,"fase-2-plus,strategist,onboarding","**Como** traficer con experiencia
+**Quiero** aplicar para ser estratega verificado
+**Para** monetizar mi conocimiento
+
+*Criterios de Aceptación:*
+- Usuario accede a Convertirse en Estratega
+- Usuario completa formulario (experiencia, portfolio, resultados)
+- Usuario sube evidencia de resultados
+- Sistema envía aplicación a equipo interno
+
+*Notas:* Fase 2+"
+Proceso de Verificación,Story,High,8,Sprint 8,Publicación de Estrategias,Copy Strategy,"fase-2-plus,admin,verification","**Como** miembro del equipo
+**Quiero** revisar aplicaciones de estrategas
+**Para** aprobar solo estrategas confiables
+
+*Criterios de Aceptación:*
+- Admin accede a panel de aplicaciones
+- Admin revisa: portfolio, screenshots de resultados, cuentas de Meta
+- Admin puede solicitar más información
+- Admin aprueba o rechaza con razón
+
+*Notas:* Fase 2+ - Proceso manual"
+Crear Estrategia Nueva,Story,Highest,13,Sprint 8,Publicación de Estrategias,Copy Strategy,"fase-2-plus,critical,strategist,n8n,complex","**Como** estratega verificado
+**Quiero** crear y publicar una nueva estrategia
+**Para** empezar a recibir suscriptores
+
+*Criterios de Aceptación:*
+- Estratega accede a Crear Estrategia
+- Estratega completa: nombre, descripción, método, parámetros configurables, precio
+- Estratega crea workflow en n8n (asistido)
+- Sistema valida workflow antes de publicar
+
+*Notas:* Fase 2+ - Complejo"
+Configurar Parámetros Dinámicos,Story,High,8,Sprint 8,Publicación de Estrategias,Copy Strategy,"fase-2-plus,strategist,n8n,technical","**Como** estratega verificado
+**Quiero** definir qué parámetros pueden configurar los suscriptores
+**Para** permitir personalización sin revelar lógica
+
+*Criterios de Aceptación:*
+- Estratega define JSON Schema de parámetros
+- Preview de formulario para usuarios
+- Validaciones automáticas (min/max, requeridos)
+- Parámetros se inyectan en workflow n8n
+
+*Notas:* Fase 2+ - Técnico avanzado"
+Crear Tablero Nuevo,Story,High,3,Sprint 1,Gestión de Tableros,Kanban Board,"reference-project,board","**Como** project manager
+**Quiero** crear un nuevo tablero Kanban
+**Para** organizar las tareas de mi equipo
+
+*Criterios de Aceptación:*
+- Usuario hace clic en Crear Tablero
+- Usuario ingresa nombre y descripción
+- Usuario selecciona template o empieza en blanco
+- Tablero se crea y usuario es redirigido
+
+*Notas:* Proyecto de referencia"
+Personalizar Columnas,Story,High,5,Sprint 1,Gestión de Tableros,Kanban Board,"reference-project,board,customization","**Como** team lead
+**Quiero** personalizar las columnas del tablero
+**Para** que coincidan con nuestro workflow
+
+*Criterios de Aceptación:*
+- Usuario puede agregar columnas con nombres custom
+- Usuario puede arrastrar columnas para reordenar
+- Usuario puede establecer límites WIP
+- Cambios se guardan y reflejan en tiempo real"
+Crear Tarjeta,Story,High,3,Sprint 2,Gestión de Tarjetas,Kanban Board,"reference-project,cards","**Como** team member
+**Quiero** crear tarjetas de tareas
+**Para** hacer seguimiento de items de trabajo
+
+*Criterios de Aceptación:*
+- Usuario hace clic en Agregar Tarjeta en cualquier columna
+- Usuario ingresa título (requerido)
+- Usuario puede agregar: descripción, etiquetas, asignados, fecha límite
+- Tarjeta aparece inmediatamente en la columna"
+Mover Tarjetas entre Columnas,Story,High,5,Sprint 2,Gestión de Tarjetas,Kanban Board,"reference-project,cards,realtime","**Como** team member
+**Quiero** mover tarjetas entre columnas
+**Para** actualizar el estado de las tareas
+
+*Criterios de Aceptación:*
+- Usuario puede arrastrar tarjeta de una columna a otra
+- Posición de tarjeta se actualiza en tiempo real para todos
+- Log de actividad registra el cambio
+- Asignado recibe notificación del cambio"
+Agregar Checklists,Story,Medium,3,Sprint 2,Gestión de Tarjetas,Kanban Board,"reference-project,cards,checklists","**Como** developer
+**Quiero** agregar checklists a tarjetas
+**Para** descomponer tareas complejas
+
+*Criterios de Aceptación:*
+- Usuario puede agregar checklist a tarjeta
+- Usuario puede agregar/eliminar items
+- Usuario puede marcar/desmarcar items
+- Porcentaje de progreso se muestra en tarjeta"
+Comentar en Tarjetas,Story,High,5,Sprint 3,Colaboración,Kanban Board,"reference-project,collaboration,comments","**Como** team member
+**Quiero** comentar en tarjetas
+**Para** comunicarme con mi equipo
+
+*Criterios de Aceptación:*
+- Usuario puede agregar comentario a tarjeta
+- Comentarios muestran autor y timestamp
+- Usuario puede mencionar otros con @usuario
+- Usuarios mencionados reciben notificaciones"
+Invitar Miembros,Story,High,5,Sprint 3,Colaboración,Kanban Board,"reference-project,collaboration,invite","**Como** board owner
+**Quiero** invitar miembros del equipo
+**Para** colaborar juntos
+
+*Criterios de Aceptación:*
+- Usuario hace clic en Invitar Miembros
+- Usuario ingresa emails
+- Invitados reciben email de invitación
+- Invitados pueden aceptar y unirse"
+Ver Analíticas del Tablero,Story,Medium,8,Sprint 4,Reportes,Kanban Board,"reference-project,analytics,reporting","**Como** project manager
+**Quiero** ver analíticas del tablero
+**Para** hacer seguimiento del performance del equipo
+
+*Criterios de Aceptación:*
+- Usuario puede acceder a dashboard de analíticas
+- Dashboard muestra métricas de cycle time
+- Dashboard muestra diagrama de flujo acumulativo
+- Usuario puede exportar datos como PDF o CSV"
+Generar Burndown Charts,Story,Medium,5,Sprint 4,Reportes,Kanban Board,"reference-project,analytics,charts","**Como** scrum master
+**Quiero** generar gráficos burndown
+**Para** hacer seguimiento del progreso del sprint
+
+*Criterios de Aceptación:*
+- Usuario puede seleccionar rango de fechas
+- Gráfico muestra trabajo completado vs restante
+- Gráfico se actualiza diariamente automáticamente
+- Usuario puede descargar gráfico como imagen"
+Implementar Autenticación JWT,Story,Highest,5,Sprint 1,Seguridad,Todos,"security,auth,backend,critical","**Como** desarrollador
+**Quiero** implementar autenticación basada en JWT
+**Para** asegurar endpoints de API
+
+*Criterios de Aceptación:*
+- Backend genera token JWT al login
+- Token incluye userId, role, expiración
+- Middleware valida token en cada request protegido
+- Token expira después de 24 horas
+
+*Notas:* Requisito de seguridad"
+Encriptar Datos Sensibles,Story,Highest,8,Sprint 1,Seguridad,Todos,"security,encryption,backend,critical,compliance","**Como** desarrollador
+**Quiero** encriptar datos sensibles en base de datos
+**Para** proteger tokens de Meta y datos de usuarios
+
+*Criterios de Aceptación:*
+- Access tokens de Meta se encriptan con AES-256
+- Passwords se hashean con bcrypt (10 rounds)
+- Datos sensibles en JSON se encriptan
+- Keys de encriptación en variables de entorno
+
+*Notas:* Compliance"
+Implementar Rate Limiting,Story,High,3,Sprint 2,Seguridad,Todos,"security,backend,rate-limiting","**Como** desarrollador
+**Quiero** implementar rate limiting en API
+**Para** prevenir abuso y ataques DDoS
+
+*Criterios de Aceptación:*
+- Rate limiting de 100 requests/minuto por IP
+- Endpoints de auth: 5 intentos/minuto
+- Headers incluyen X-RateLimit-Remaining
+- Usuario recibe error 429 al exceder límite
+
+*Notas:* Seguridad"
+Setup CI/CD Pipeline,Story,High,5,Sprint 1,Infraestructura,Todos,"devops,ci-cd,automation","**Como** devops
+**Quiero** configurar pipeline de CI/CD
+**Para** automatizar testing y deployment
+
+*Criterios de Aceptación:*
+- Pipeline se ejecuta en cada push a main
+- Tests unitarios e integración se ejecutan
+- Build solo se despliega si tests pasan
+- Notificación de éxito/fallo por email
+
+*Notas:* DevOps"
+Implementar Health Checks,Story,High,3,Sprint 2,Infraestructura,Todos,"devops,monitoring,backend","**Como** devops
+**Quiero** implementar endpoints de health check
+**Para** monitorear disponibilidad de servicios
+
+*Criterios de Aceptación:*
+- Endpoint /health retorna status 200
+- Endpoint verifica: DB connection, Redis connection, Meta API
+- Respuesta incluye timestamp y versión
+- Uptime monitoring llama endpoint cada 5 min
+
+*Notas:* Observabilidad"
+Configurar Logs Estructurados,Story,Medium,5,Sprint 2,Infraestructura,Todos,"devops,logging,backend,monitoring","**Como** desarrollador
+**Quiero** implementar sistema de logs estructurados
+**Para** facilitar debugging y monitoreo
+
+*Criterios de Aceptación:*
+- Logs en formato JSON estructurado
+- Logs incluyen: timestamp, level, service, userId, traceId
+- Logs críticos se envían a servicio externo (Sentry)
+- Logs se retienen por 30 días
+
+*Notas:* Observabilidad"
+Implementar Caching de Campañas,Story,High,5,Sprint 2,Performance,Todos,"backend,performance,redis,optimization","**Como** desarrollador
+**Quiero** cachear datos de campañas en Redis
+**Para** reducir llamadas a Meta API y mejorar velocidad
+
+*Criterios de Aceptación:*
+- Datos de campañas se cachean por 30 minutos
+- Cache se invalida al cambiar datos
+- Backend verifica cache antes de llamar Meta API
+- TTL configurable por tipo de dato
+
+*Notas:* Optimización"
+Optimizar Queries de Base de Datos,Story,Medium,5,Sprint 3,Performance,Todos,"backend,performance,database,optimization","**Como** desarrollador
+**Quiero** optimizar queries de base de datos
+**Para** reducir tiempo de respuesta de API
+
+*Criterios de Aceptación:*
+- Indexes en campos frecuentemente consultados
+- Queries con N+1 resueltas con eager loading
+- Query plan analizado con EXPLAIN
+- Queries lentas (>100ms) loggeadas
+
+*Notas:* Performance"
+Implementar Tests Unitarios,Story,High,8,Sprint 2,Testing,Todos,"testing,quality,backend,unit-tests","**Como** desarrollador
+**Quiero** escribir tests unitarios para servicios críticos
+**Para** asegurar calidad del código
+
+*Criterios de Aceptación:*
+- Cobertura mínima de 80% en servicios
+- Tests para: auth service, meta-api service, stripe service
+- Tests se ejecutan antes de cada commit
+- CI falla si tests no pasan
+
+*Notas:* Calidad"
+Implementar Tests E2E,Story,Medium,13,Sprint 4,Testing,Todos,"testing,quality,e2e,qa","**Como** qa engineer
+**Quiero** implementar tests end-to-end
+**Para** validar flujos completos de usuario
+
+*Criterios de Aceptación:*
+- Tests con Playwright o Cypress
+- Flujos cubiertos: registro/login, conexión Meta, suscripción a estrategia
+- Tests corren en staging antes de producción
+- Screenshots de fallos guardados
+
+*Notas:* QA"
+Implementar Loading States,Story,Medium,3,Sprint 2,UX/UI,Todos,"frontend,ux,ui,loading","**Como** frontend developer
+**Quiero** mostrar estados de carga apropiados
+**Para** mejorar experiencia de usuario
+
+*Criterios de Aceptación:*
+- Skeleton screens en listados
+- Spinners en botones de acción
+- Progress bars en operaciones largas
+- Mensajes informativos durante carga
+
+*Notas:* UX"
+Toast Notifications,Story,Medium,3,Sprint 1,UX/UI,Todos,"frontend,ux,ui,notifications","**Como** frontend developer
+**Quiero** mostrar notificaciones toast para acciones
+**Para** dar feedback inmediato al usuario
+
+*Criterios de Aceptación:*
+- Toasts para éxito, error, warning, info
+- Toasts se auto-cierran después de 4 segundos
+- Usuario puede cerrar toast manualmente
+- Máximo 3 toasts simultáneos
+
+*Notas:* UX"
+Responsive Design Mobile,Story,High,8,Sprint 3,UX/UI,Todos,"frontend,ux,ui,responsive,mobile","**Como** frontend developer
+**Quiero** que la interfaz sea responsive
+**Para** soportar usuarios en dispositivos móviles
+
+*Criterios de Aceptación:*
+- Breakpoints: mobile (<768px), tablet (768-1024px), desktop (>1024px)
+- Navegación adaptativa (hamburger menu en mobile)
+- Columnas apiladas verticalmente en mobile
+- Touch targets mínimo 44x44px
+
+*Notas:* Mobile"
+Implementar GDPR Compliance,Story,High,13,Sprint 5,Compliance,Todos,"legal,compliance,gdpr,privacy","**Como** legal/dev
+**Quiero** cumplir con regulaciones GDPR
+**Para** permitir usuarios de EU
+
+*Criterios de Aceptación:*
+- Política de privacidad visible
+- Usuarios pueden solicitar sus datos
+- Usuarios pueden solicitar eliminación de datos
+- Cookies consent banner
+
+*Notas:* Legal - Si hay usuarios EU"
+Términos de Servicio,Story,Highest,5,Sprint 1,Compliance,Todos,"legal,compliance,critical,tos","**Como** legal
+**Quiero** tener términos de servicio claros
+**Para** proteger legalmente la plataforma
+
+*Criterios de Aceptación:*
+- TOS cubren: uso aceptable, limitaciones de responsabilidad, propiedad intelectual
+- Usuarios deben aceptar TOS al registrarse
+- Link a TOS en footer
+- Versión y fecha de actualización
+
+*Notas:* Legal - Obligatorio"
